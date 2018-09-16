@@ -1,0 +1,10 @@
+# Ignore derived artifacts
+bin/
+log/
+target/
+tmp/
+
+# Ignore Eclipse settings
+.settings/
+.classpath
+.project
