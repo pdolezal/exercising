@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.yetamine</groupId>
+  <artifactId>net.yetamine.playground</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>net.yetamine.playground</name>
+  <description>A playground project</description>
+  <url>http://yetamine.net/</url>
+
+  <organization>
+    <name>Yetamine</name>
+    <url>http://yetamine.net/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>pdolezal</id>
+      <name>Petr Doležal</name>
+    </developer>
+  </developers>
+
+  <properties>
+    <info.builder>${project.organization.name}</info.builder>
+
+    <!-- Module description -->
+    <module.name>${project.artifactId}</module.name>
+    <module.version>${project.version}</module.version>
+
+    <!-- Build options -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.compiler.release>${java.compiler.target}</java.compiler.release>
+    <java.compiler.source>11</java.compiler.source>
+    <java.compiler.target>11</java.compiler.target>
+    <java.compiler.lint>all</java.compiler.lint>
+  </properties>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.junit</groupId>
+        <artifactId>junit-bom</artifactId>
+        <version>5.3.1</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-engine</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <directory>bin</directory>
+    <outputDirectory>bin/build-main</outputDirectory>
+    <testOutputDirectory>bin/build-test</testOutputDirectory>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.8.0</version>
+
+        <configuration>
+          <release>${java.compiler.release}</release>
+          <source>${java.compiler.source}</source>
+          <target>${java.compiler.target}</target>
+
+          <compilerArgs>
+            <arg>-Xlint:${java.compiler.lint}</arg>
+            <arg>--module-version=${module.version}</arg>
+          </compilerArgs>
+
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.1.0</version>
+
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Built-By>${info.builder}</Built-By>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.22.1</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>
