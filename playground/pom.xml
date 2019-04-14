@@ -41,11 +41,16 @@
     <module.version>${project.version}</module.version>
 
     <!-- Build options -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <java.version>11</java.version>
     <java.compiler.release>${java.compiler.target}</java.compiler.release>
-    <java.compiler.source>11</java.compiler.source>
-    <java.compiler.target>11</java.compiler.target>
+    <java.compiler.source>${java.version}</java.compiler.source>
+    <java.compiler.target>${java.version}</java.compiler.target>
     <java.compiler.lint>all</java.compiler.lint>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Additional options -->
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <dependencyManagement>
@@ -53,13 +58,13 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.3.1</version>
+        <version>5.4.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -84,6 +89,12 @@
     <testOutputDirectory>bin/build-test</testOutputDirectory>
 
     <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-toolchains-plugin</artifactId>
+        <version>1.1</version>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -125,4 +136,41 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>toolchains</id>
+
+      <activation>
+        <property>
+          <name>toolchains</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-toolchains-plugin</artifactId>
+
+            <configuration>
+              <toolchains>
+                <jdk>
+                  <version>${java.version}</version>
+                </jdk>
+              </toolchains>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>toolchain</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
