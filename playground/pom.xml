@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>net.yetamine</groupId>
   <artifactId>net.yetamine.playground</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>${revision}</version>
   <packaging>jar</packaging>
 
-  <name>net.yetamine.playground</name>
+  <name>${project.artifactId}</name>
   <description>A playground project</description>
   <url>http://yetamine.net/</url>
 
@@ -34,11 +32,15 @@
   </developers>
 
   <properties>
-    <info.builder>${project.organization.name}</info.builder>
+    <!--
+        The next major version that the snapshot converges to. Change when
+        switching to the next major version. Otherwise update the revision
+        on a change in the 'release' profile at the end of the file.
+    -->
+    <revision>1.0.0-SNAPSHOT</revision>
 
-    <!-- Module description -->
-    <module.name>${project.artifactId}</module.name>
-    <module.version>${project.version}</module.version>
+    <!-- Branding and information supply -->
+    <info.builder>${project.organization.name}</info.builder>
 
     <!-- Build options -->
     <java.version>11</java.version>
@@ -49,6 +51,10 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
+    <!-- Module assembly options -->
+    <module.name>${project.artifactId}</module.name>
+    <module.version>${project.version}</module.version>
+
     <!-- Additional options -->
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
@@ -58,7 +64,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.4.2</version>
+        <version>5.5.2</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -84,21 +90,44 @@
   </dependencies>
 
   <build>
-    <directory>bin</directory>
-    <outputDirectory>bin/build-main</outputDirectory>
-    <testOutputDirectory>bin/build-test</testOutputDirectory>
+    <directory>target</directory>
+    <outputDirectory>${project.build.directory}/build-dist</outputDirectory>
+    <testOutputDirectory>${project.build.directory}/build-test</testOutputDirectory>
 
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.0.0-M2</version>
+
+        <executions>
+          <execution>
+            <id>enforce-default</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <dependencyConvergence/>
+                <requireMavenVersion>
+                  <version>3.6</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-toolchains-plugin</artifactId>
-        <version>1.1</version>
+        <version>3.0.0</version>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.0</version>
+        <version>3.8.1</version>
 
         <configuration>
           <release>${java.compiler.release}</release>
@@ -131,8 +160,56 @@
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.1.1</version>
+
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Built-By>${info.builder}</Built-By>
+            </manifestEntries>
+          </archive>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.1.0</version>
+
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Built-By>${info.builder}</Built-By>
+            </manifestEntries>
+          </archive>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>2.22.1</version>
+        <version>2.22.2</version>
       </plugin>
     </plugins>
   </build>
@@ -140,13 +217,6 @@
   <profiles>
     <profile>
       <id>toolchains</id>
-
-      <activation>
-        <property>
-          <name>toolchains</name>
-          <value>true</value>
-        </property>
-      </activation>
 
       <build>
         <plugins>
@@ -161,11 +231,75 @@
                 </jdk>
               </toolchains>
             </configuration>
+
             <executions>
               <execution>
                 <goals>
                   <goal>toolchain</goal>
                 </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>preview</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+
+            <configuration>
+              <skipSource>true</skipSource>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>release</id>
+
+      <properties>
+        <!--
+            Either the last released version (if same), or the next version to
+            be released according to semantic versioning. Bump when changed to
+            the appropriate next version.
+        -->
+        <revision>1.0.0</revision>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+
+            <executions>
+              <execution>
+                <id>enforce-release</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireReleaseDeps/>
+                    <requireReleaseVersion/>
+                  </rules>
+                </configuration>
               </execution>
             </executions>
           </plugin>
