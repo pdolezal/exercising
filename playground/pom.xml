@@ -43,7 +43,7 @@
     <info.builder>${project.organization.name}</info.builder>
 
     <!-- Build options -->
-    <java.version>15</java.version>
+    <java.version>16</java.version>
     <java.compiler.release>${java.compiler.target}</java.compiler.release>
     <java.compiler.source>${java.version}</java.compiler.source>
     <java.compiler.target>${java.version}</java.compiler.target>
@@ -64,7 +64,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.5.2</version>
+        <version>5.7.1</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -137,7 +137,8 @@
           <compilerArgs>
             <arg>-Xlint:${java.compiler.lint}</arg>
             <arg>--module-version=${module.version}</arg>
-            <arg>--enable-preview</arg>arg>
+            <arg>--enable-preview</arg>
+            arg>
           </compilerArgs>
 
           <showDeprecation>true</showDeprecation>
@@ -148,7 +149,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.0</version>
 
         <configuration>
           <archive>
@@ -162,7 +163,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.1.1</version>
+        <version>3.2.0</version>
 
         <configuration>
           <archive>
@@ -186,7 +187,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.1.0</version>
+        <version>3.2.1</version>
 
         <configuration>
           <archive>
