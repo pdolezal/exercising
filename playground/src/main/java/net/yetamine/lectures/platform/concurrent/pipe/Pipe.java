@@ -12,12 +12,6 @@ import java.util.concurrent.TimeoutException;
  */
 public interface Pipe<E> {
 
-    // TODO: Implement an unbounded queue
-    //
-    // Mandatory methods are put(E) and take(), other methods may be omitted
-    // for the sake of simplicity (but their implementation for an unbounded
-    // queue should be almost trivial.
-
     /**
      * Puts an element in the queue. This method may block if the queue has
      * limited capacity.

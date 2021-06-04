@@ -47,12 +47,23 @@ public final class UnsynchronizedIncrement {
      *            the target value to increment to
      */
     private void task(int target) {
-        // TODO: Implement this method properly synchronized
         System.out.format("Started to reach %d%n", target);
 
         while (shared < target) {
             ++shared;
         }
+
+//         Comment out the code above and uncomment this piece to get
+//         more proper behavior where the result is always the same:
+//        while (true) {
+//            synchronized (this) {
+//                if (target <= shared) {
+//                    break;
+//                }
+//
+//                ++shared;
+//            }
+//        }
 
         System.out.format("Reached %d%n", target);
     }
