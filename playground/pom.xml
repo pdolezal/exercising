@@ -33,9 +33,9 @@
 
   <properties>
     <!--
-        The next major version that the snapshot converges to. Change when
-        switching to the next major version. Otherwise update the revision
-        on a change in the 'release' profile at the end of the file.
+      The next major version that the snapshot converges to. Change when
+      switching to the next major version. Otherwise update the revision
+      on a change in the 'release' profile at the end of the file.
     -->
     <revision>1.0.0-SNAPSHOT</revision>
 
@@ -43,7 +43,7 @@
     <info.builder>${project.organization.name}</info.builder>
 
     <!-- Build options -->
-    <java.version>16</java.version>
+    <java.version>21</java.version>
     <java.compiler.release>${java.compiler.target}</java.compiler.release>
     <java.compiler.source>${java.version}</java.compiler.source>
     <java.compiler.target>${java.version}</java.compiler.target>
@@ -64,7 +64,7 @@
       <dependency>
         <groupId>org.junit</groupId>
         <artifactId>junit-bom</artifactId>
-        <version>5.7.1</version>
+        <version>5.10.0</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -98,7 +98,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-enforcer-plugin</artifactId>
-        <version>3.0.0-M3</version>
+        <version>3.3.0</version>
 
         <executions>
           <execution>
@@ -110,7 +110,7 @@
               <rules>
                 <dependencyConvergence/>
                 <requireMavenVersion>
-                  <version>3.6</version>
+                  <version>3.8</version>
                 </requireMavenVersion>
               </rules>
             </configuration>
@@ -121,13 +121,36 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-toolchains-plugin</artifactId>
-        <version>3.0.0</version>
+        <version>3.1.0</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>1.5.0</version>
+
+        <configuration>
+          <flattenMode>oss</flattenMode>
+          <updatePomFile>true</updatePomFile>
+          <flattenedPomFilename>pom.xml</flattenedPomFilename>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>flatten-process</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.11.0</version>
 
         <configuration>
           <release>${java.compiler.release}</release>
@@ -138,18 +161,29 @@
             <arg>-Xlint:${java.compiler.lint}</arg>
             <arg>--module-version=${module.version}</arg>
             <arg>--enable-preview</arg>
-            arg>
           </compilerArgs>
 
           <showDeprecation>true</showDeprecation>
           <showWarnings>true</showWarnings>
         </configuration>
+
+        <executions>
+          <execution>
+            <id>default-testCompile</id>
+
+            <configuration>
+              <compilerArgs>
+                <arg>-Xlint:${java.compiler.lint},-exports</arg>
+              </compilerArgs>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
 
         <configuration>
           <archive>
@@ -163,7 +197,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>3.2.0</version>
+        <version>3.5.0</version>
 
         <configuration>
           <archive>
@@ -171,6 +205,8 @@
               <Built-By>${info.builder}</Built-By>
             </manifestEntries>
           </archive>
+
+          <doclint>all,-missing</doclint>
         </configuration>
 
         <executions>
@@ -187,7 +223,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-source-plugin</artifactId>
-        <version>3.2.1</version>
+        <version>3.3.0</version>
 
         <configuration>
           <archive>
@@ -211,7 +247,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M5</version>
+        <version>3.1.2</version>
 
         <configuration>
           <argLine>--enable-preview</argLine>
@@ -281,9 +317,9 @@
 
       <properties>
         <!--
-            Either the last released version (if same), or the next version to
-            be released according to semantic versioning. Bump when changed to
-            the appropriate next version.
+          Either the last released version (if same), or the next version to
+          be released according to semantic versioning. Bump when changed to
+          the appropriate next version.
         -->
         <revision>1.0.0</revision>
       </properties>
