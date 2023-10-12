@@ -321,7 +321,7 @@
           be released according to semantic versioning. Bump when changed to
           the appropriate next version.
         -->
-        <revision>1.0.0</revision>
+        <revision>0.0.0</revision>
       </properties>
 
       <build>
