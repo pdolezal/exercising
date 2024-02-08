@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.yetamine</groupId>
+  <artifactId>net.yetamine.lectures.osgi.demo</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
+
+  <name>${project.artifactId}</name>
+  <description>Snippets for Java OSGi lectures</description>
+  <url>http://yetamine.net/</url>
+
+  <organization>
+    <name>Yetamine</name>
+    <url>http://yetamine.net/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>pdolezal</id>
+      <name>Petr Doležal</name>
+    </developer>
+  </developers>
+
+  <modules>
+    <module>net.yetamine.lectures.osgi.demo.api</module>
+    <module>net.yetamine.lectures.osgi.demo.blueprint</module>
+    <module>net.yetamine.lectures.osgi.demo.cdi.consumer</module>
+    <module>net.yetamine.lectures.osgi.demo.cdi.provider</module>
+    <module>net.yetamine.lectures.osgi.demo.ds</module>
+    <module>net.yetamine.lectures.osgi.demo.lookup</module>
+    <module>net.yetamine.lectures.osgi.demo.ns.config</module>
+    <module>net.yetamine.lectures.osgi.demo.ns.fixed</module>
+    <module>net.yetamine.lectures.osgi.demo.tracker</module>
+  </modules>
+
+  <build>
+    <directory>bin</directory>
+    <outputDirectory>bin/classes-dist</outputDirectory>
+    <testOutputDirectory>bin/classes-test</testOutputDirectory>
+  </build>
+</project>

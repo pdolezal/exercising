@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>net.yetamine</groupId>
+  <artifactId>net.yetamine.lectures.osgi.demo.tracker</artifactId>
+  <version>${revision}</version>
+  <packaging>bundle</packaging>
+
+  <name>${project.artifactId}</name>
+  <description>Snippets for Java OSGi lectures</description>
+  <url>http://yetamine.net/</url>
+
+  <organization>
+    <name>Yetamine</name>
+    <url>http://yetamine.net/</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>pdolezal</id>
+      <name>Petr Doležal</name>
+    </developer>
+  </developers>
+
+  <properties>
+    <!--
+      The next major version that the snapshot converges to. Change when
+      switching to the next major version. Otherwise update the revision
+      on a change in the 'release' profile at the end of the file.
+    -->
+    <revision>1.0.0-SNAPSHOT</revision>
+
+    <!-- Branding and information supply -->
+    <info.builder>${project.organization.name}</info.builder>
+
+    <!-- Build options -->
+    <java.version>21</java.version>
+    <java.compiler.release>${java.compiler.target}</java.compiler.release>
+    <java.compiler.source>${java.version}</java.compiler.source>
+    <java.compiler.target>${java.version}</java.compiler.target>
+    <java.compiler.lint>all</java.compiler.lint>
+
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+    <!-- Module assembly options -->
+    <module.name>${project.artifactId}</module.name>
+    <module.version>${project.version}</module.version>
+    <source.includePom>true</source.includePom>
+    <source.includeSrc>true</source.includeSrc>
+
+    <!-- Additional options -->
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.annotation</artifactId>
+      <version>8.1.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>osgi.core</artifactId>
+      <version>8.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>net.yetamine</groupId>
+      <artifactId>net.yetamine.lectures.osgi.demo.api</artifactId>
+      <version>1.0.0</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <directory>target</directory>
+    <outputDirectory>${project.build.directory}/build-dist</outputDirectory>
+    <testOutputDirectory>${project.build.directory}/build-test</testOutputDirectory>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <version>3.4.1</version>
+
+        <executions>
+          <execution>
+            <id>enforce-default</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <dependencyConvergence/>
+                <requireMavenVersion>
+                  <version>3.9</version>
+                </requireMavenVersion>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-toolchains-plugin</artifactId>
+        <version>3.1.0</version>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>flatten-maven-plugin</artifactId>
+        <version>1.5.0</version>
+
+        <configuration>
+          <flattenDependencyMode>all</flattenDependencyMode>
+          <flattenMode>oss</flattenMode>
+          <flattenedPomFilename>pom.xml</flattenedPomFilename>
+          <outputDirectory>${project.build.directory}</outputDirectory>
+          <updatePomFile>true</updatePomFile>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>flatten-process</id>
+            <phase>process-resources</phase>
+            <goals>
+              <goal>flatten</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.12.1</version>
+
+        <configuration>
+          <release>${java.compiler.release}</release>
+          <source>${java.compiler.source}</source>
+          <target>${java.compiler.target}</target>
+
+          <compilerArgs>
+            <arg>-Xlint:${java.compiler.lint}</arg>
+          </compilerArgs>
+
+          <showDeprecation>true</showDeprecation>
+          <showWarnings>true</showWarnings>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>3.6.3</version>
+
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Built-By>${info.builder}</Built-By>
+            </manifestEntries>
+          </archive>
+
+          <doclint>all,-missing</doclint>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>3.3.0</version>
+
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Built-By>${info.builder}</Built-By>
+            </manifestEntries>
+          </archive>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>package</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.2.3</version>
+      </plugin>
+
+      <plugin>
+        <groupId>biz.aQute.bnd</groupId>
+        <artifactId>bnd-baseline-maven-plugin</artifactId>
+        <version>7.0.0</version>
+
+        <configuration>
+          <failOnMissing>false</failOnMissing>
+        </configuration>
+
+        <executions>
+          <execution>
+            <id>baseline</id>
+            <goals>
+              <goal>baseline</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>5.1.9</version>
+        <extensions>true</extensions>
+
+        <configuration>
+          <instructions>
+            <!--
+                Notes:
+
+                - Do not forget the activator, otherwise nothing happens.
+                - It is safer to enter the class name, so there is no doubt
+                  which class to use and bnd would complain when the header
+                  would be invalid. However, it is possible to use bnd macro
+                  ${classes;CONCRETE;IMPLEMENTS;org.osgi.framework.BundleActivator}
+                  to find the class. This is stable with refactoring, but the macro
+                  has some caveats as well.
+                - Using '@Header' annotation is even better with recent tooling.
+                  This approach is used here.
+                - Be careful with Private-Package and Export-Package. Either
+                  include 'internal' or 'impl' in the name of private packages
+                  (with this Maven plugin), or specify Export-Package manually,
+                  e.g., specify nothing to export nothing like here.
+            -->
+            <Bundle-SymbolicName>${module.name}</Bundle-SymbolicName>
+            <Export-Package></Export-Package>
+            <_removeheaders>Private-Package, Include-Resource, Tool, Bnd-LastModified, Created-By, Built-By</_removeheaders>
+            <_sources>${source.includeSrc}</_sources>
+          </instructions>
+
+          <supportIncrementalBuild>true</supportIncrementalBuild>
+        </configuration>
+
+        <executions>
+          <execution>
+            <goals>
+              <goal>manifest</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>toolchains</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-toolchains-plugin</artifactId>
+
+            <configuration>
+              <toolchains>
+                <jdk>
+                  <version>${java.version}</version>
+                </jdk>
+              </toolchains>
+            </configuration>
+
+            <executions>
+              <execution>
+                <goals>
+                  <goal>toolchain</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>preview</id>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+
+            <configuration>
+              <skip>true</skip>
+            </configuration>
+          </plugin>
+
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+
+            <configuration>
+              <skipSource>true</skipSource>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+    <profile>
+      <id>release</id>
+
+      <properties>
+        <!--
+          Either the last released version (if same), or the next version to
+          be released according to semantic versioning. Bump when changed to
+          the appropriate next version.
+        -->
+        <revision>1.0.0</revision>
+      </properties>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-enforcer-plugin</artifactId>
+
+            <executions>
+              <execution>
+                <id>enforce-release</id>
+                <goals>
+                  <goal>enforce</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <requireReleaseDeps/>
+                    <requireReleaseVersion/>
+                  </rules>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+</project>
